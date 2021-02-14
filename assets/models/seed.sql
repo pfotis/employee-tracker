@@ -18,7 +18,7 @@ CREATE TABLE role (
     primary key(id)
 );
 
-CREATE TABLE role (
+CREATE TABLE employee (
 	id INTEGER(10),
     first_name VARCHAR(30),
     last_name VARCHAR(30),
