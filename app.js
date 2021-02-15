@@ -37,8 +37,10 @@ const start = () =>{
       message: 'What would you like to do?',
       choices:[
         'View all the employees',
+        'Add new department',
         'Add new employee',
-        'exit',
+        'Add new role',
+        'Exit',
       ], 
     })
     .then((answer) => {
@@ -50,6 +52,12 @@ const start = () =>{
         }
         case 'Add new employee':
          addNewEmployee();
+          break;
+        case 'Add new role':
+          addNewRole();
+          break;
+        case 'Add new department':
+          addNewDepartment();
           break;
         case 'Exit':
           connection.end();
@@ -78,45 +86,92 @@ const viewAllEmployees = () => {
 };
 
 const addNewEmployee = () =>{
+    inquirer.prompt([
+      {
+        name: 'first_name',
+        type: 'input',
+        message: 'What is the first name of the employee?',
+      },
+      {
+        name: 'last_name',
+        type: 'input',
+        message: 'What is the last name of the employee?',
+      },
+      {
+        name: 'role_id',
+        type: 'rawlist',
+        message: 'What is the role id of the employee?',
+      },
+      {
+        name: 'manager_id',
+        type: 'input',
+        message: 'What is the manager ID of the employee?',
+      },
+    ]).then((answer) => {
+        const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
+                      VALUES (?, ?, ?, ?)`;
+        connection.query(query, 
+          [
+            answer.first_name,
+            answer.last_name,
+            answer.role_id,
+            answer.manager_id,
+          ], (err, res) => {
+            console.log(`The new employee was inserted successfully!`);
+          });
+          start();
+      });
+};
+
+const addNewRole = () =>{
   inquirer.prompt([
     {
-      name: 'first_name',
+      name: 'title',
       type: 'input',
-      message: 'What is the first name of the employee?',
+      message: 'What is the title of the role?',
     },
     {
-      name: 'last_name',
+      name: 'salary',
       type: 'input',
-      message: 'What is the last name of the employee?',
+      message: 'What is the salary of the role?',
     },
     {
-      name: 'role_id',
+      name: 'department_id',
       type: 'rawlist',
-      message: 'What is the rode id of the employee?',
-    },
-    {
-      name: 'manager_id',
-      type: 'input',
-      message: 'What is the manager ID of the employee?',
+      message: 'What is the department id of the role?',
     },
   ]).then((answer) => {
-      let id =answer.id;
-      console.log(id);
-      const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
-                    VALUES (?, ?, ?, ?)`;
+      const query = `INSERT INTO employee (title, salary, department_id) 
+                    VALUES (?, ?, ?)`;
       connection.query(query, 
         [
-          answer.first_name,
-          answer.last_name,
-          answer.role_id,
-          answer.manager_id,
+          answer.title,
+          answer.salary,
+          answer.department_id,
         ], (err, res) => {
-          console.log(`Your new employee was inserted successfully!`);
+          console.log(`The new role was inserted successfully!`);
         });
         start();
     });
 };
 
-
   
-
+const addNewDepartment = () =>{
+  inquirer.prompt([
+    {
+      name: 'name',
+      type: 'input',
+      message: 'What is the name of the department?',
+    }
+  ]).then((answer) => {
+      const query = `INSERT INTO employee (name) 
+                    VALUES (?)`;
+      connection.query(query, 
+        [
+          answer.name
+        ], (err, res) => {
+          console.log(`The new department was inserted successfully!`);
+        });
+        start();
+    });
+};
