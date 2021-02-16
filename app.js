@@ -265,7 +265,7 @@ const updateRole = () =>{
           answer.role_id,
           answer.id
         ], (err, res) => {
-          console.log(`The new department was inserted successfully!`);
+          console.log(`The update role was successfully!`);
         });
         start();
     });
@@ -285,7 +285,7 @@ const deleteEmployee = () =>{
   ]).then((answer) => {
       const query = `DELETE FROM employee WHERE id= ?`;
       connection.query(query, [answer.id], (err, res) => {
-          console.log(`The new department was inserted successfully!`);
+          console.log(`The employee was deleted successfully!`);
         });
         start();
     });
@@ -296,7 +296,21 @@ const deleteEmployee = () =>{
                                         DELETE DEPARTMENT
 -------------------------------------------------------------------------------------------------*/
 
-
+const deleteDepartment = () =>{
+  inquirer.prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the id of the department?',
+    },
+  ]).then((answer) => {
+      const query = `DELETE FROM department WHERE id= ?`;
+      connection.query(query, [answer.id], (err, res) => {
+          console.log(`The department was deleted successfully!`);
+        });
+        start();
+    });
+  };
 
 /*------------------------------------------------------------------------------------------------
                                         DELETE ROLE
