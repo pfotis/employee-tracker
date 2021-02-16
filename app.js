@@ -49,7 +49,7 @@ const start = () =>{
     .then((answer) => {
       switch (answer.action) {
         case 'View all the departments': 
-          // todo function
+          view.allDepartment();
           break;
         case 'View all the departments': 
           view.allEmployees();
