@@ -330,3 +330,48 @@ const deleteRole = () =>{
         start();
     });
   };
+
+  /*------------------------------------------------------------------------------------------------
+                                        DELETE ROLE
+-------------------------------------------------------------------------------------------------*/
+
+const deleteRole = () =>{
+  inquirer.prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the id of the role?',
+    },
+  ]).then((answer) => {
+      const query = `DELETE FROM role WHERE id= ?`;
+      connection.query(query, [answer.id], (err, res) => {
+          console.log(`The role was deleted successfully!`);
+        });
+        start();
+    });
+  };
+
+/*------------------------------------------------------------------------------------------------
+                                       VIEW EMPLOYEES BY MANAGER
+-------------------------------------------------------------------------------------------------*/
+
+const viewEmployeeByManager = () =>{
+  inquirer.prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the id of the manager?',
+    },
+  ]).then((answer) => {
+      const query = `SELECT id, first_name, last_name, role_id, manager_id
+      FROM employee WHERE id= ?`;
+      connection.query(query, [answer.id], (err, res) => {
+        console.log(`id   first name   last name   role_id   manager`);
+        console.log(`--------------------------------------------------------`);
+        res.forEach(({id, first_name, last_name, role_id, manager_id }) => {
+          console.log(`${id}   ${first_name}   ${last_name}   ${role_id}   ${manager_id}`);
+        });
+      });
+        start();
+    });
+};
