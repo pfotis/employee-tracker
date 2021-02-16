@@ -1,8 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 
-// const add = require('./add.js');
-// const view = require('./view.js');
+
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -30,6 +29,7 @@ connection.connect(function(err) {
 });
 
 const start = () =>{
+  console.log(array);
   inquirer
     .prompt({
       name: 'action',
@@ -43,6 +43,9 @@ const start = () =>{
         'Add new employee',
         'Add new role',
         'Update employee role',
+        'Delete department',
+        'Delete employee',
+        'Delete role',
         'Exit',
       ],
     })
@@ -69,6 +72,15 @@ const start = () =>{
         case 'Update employee role':
           updateRole();
           break;
+        case 'Delete department':
+          // todo function
+          break;
+        case 'Delete employee':
+          deleteEmployee();
+          break;
+        case 'Delete role':
+          // todo function
+          break;
         case 'Exit':
           connection.end();
           break;
@@ -79,9 +91,12 @@ const start = () =>{
     });
 };
 
+/*------------------------------------------------------------------------------------------------
+                                        VIEW ALL THE EMPLOYEES
+-------------------------------------------------------------------------------------------------*/
 
 const viewallEmployees = () => {
-  const query = `SELECT employee.id, first_name, last_name, role_id, manager_id
+  const query = `SELECT id, first_name, last_name, role_id, manager_id
                 FROM employee`;
   connection.query(query, (err, res) => {
     console.log(`id   first name   last name   role_id   manager`);
@@ -92,6 +107,10 @@ const viewallEmployees = () => {
     start();
   });
 };
+
+/*------------------------------------------------------------------------------------------------
+                                        VIEW ALL THE DEPARTMENTS
+-------------------------------------------------------------------------------------------------*/
 
 const viewallDepartment = () => {
   const query = `SELECT id, name FROM department`;
@@ -104,6 +123,10 @@ const viewallDepartment = () => {
     start();
   });
 };
+
+/*------------------------------------------------------------------------------------------------
+                                        VIEW ALL THE ROLES
+-------------------------------------------------------------------------------------------------*/
 
 const viewallRole = () => {
   const query = `SELECT role.id, title, salary, name FROM role
@@ -118,6 +141,9 @@ const viewallRole = () => {
   });
 };
 
+/*------------------------------------------------------------------------------------------------
+                                        ADD NEW EMPLOYEE
+-------------------------------------------------------------------------------------------------*/
 
 const addnewEmployee = () =>{
   inquirer.prompt([
@@ -157,6 +183,12 @@ const addnewEmployee = () =>{
     });
 };
 
+
+/*------------------------------------------------------------------------------------------------
+                                        ADD NEW ROLE
+-------------------------------------------------------------------------------------------------*/
+
+
 const addnewRole = () =>{
 inquirer.prompt([
   {
@@ -189,6 +221,9 @@ inquirer.prompt([
   });
 };
 
+/*------------------------------------------------------------------------------------------------
+                                        ADD NEW DEPARTMENT
+-------------------------------------------------------------------------------------------------*/
 
 const addnewDepartment = () =>{
 inquirer.prompt([
@@ -200,16 +235,16 @@ inquirer.prompt([
 ]).then((answer) => {
     const query = `INSERT INTO department (name) 
                   VALUES (?)`;
-    connection.query(query, 
-      [
-        answer.name,
-      ], (err, res) => {
+    connection.query(query, [answer.name], (err, res) => {
         console.log(`The new department was inserted successfully!`);
       });
       start();
   });
 };
 
+/*------------------------------------------------------------------------------------------------
+                                        UPDATE ROLE FRO THE EMPLOYEE
+-------------------------------------------------------------------------------------------------*/
 const updateRole = () =>{
   inquirer.prompt([
     {
@@ -224,7 +259,7 @@ const updateRole = () =>{
     }
   ]).then((answer) => {
       const query = `UPDATE  employee SET role_id = ? 
-                    WHERE id = "`;
+                    WHERE id = ?`;
       connection.query(query, 
         [
           answer.role_id,
@@ -236,3 +271,33 @@ const updateRole = () =>{
     });
   };
 
+/*------------------------------------------------------------------------------------------------
+                                        DELETE EMPLOYEE
+-------------------------------------------------------------------------------------------------*/
+
+const deleteEmployee = () =>{
+  inquirer.prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the id of the employee?',
+    },
+  ]).then((answer) => {
+      const query = `DELETE FROM employee WHERE id= ?`;
+      connection.query(query, [answer.id], (err, res) => {
+          console.log(`The new department was inserted successfully!`);
+        });
+        start();
+    });
+  };
+
+
+/*------------------------------------------------------------------------------------------------
+                                        DELETE DEPARTMENT
+-------------------------------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------------------------
+                                        DELETE ROLE
+-------------------------------------------------------------------------------------------------*/
