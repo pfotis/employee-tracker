@@ -11,7 +11,7 @@
 
 link of repository :   https://github.com/pfotis/employee-tracker
 
-link of video    :  
+link of video    :  https://drive.google.com/file/d/1T5LL2ZRrMBjo6_XrGYMKBI9GJgmVz1xG/view
 
 ## Description
 
@@ -22,7 +22,9 @@ There is  a menu could help the user to choose what he/she wants.
 ## Installation
 
 npm install inquirer
+
 npm install mysql
+
 npm install console.table
 
 ## Test
