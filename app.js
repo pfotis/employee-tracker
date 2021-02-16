@@ -29,7 +29,6 @@ connection.connect(function(err) {
 });
 
 const start = () =>{
-  console.log(array);
   inquirer
     .prompt({
       name: 'action',
@@ -73,13 +72,13 @@ const start = () =>{
           updateRole();
           break;
         case 'Delete department':
-          // todo function
+          deleteDepartment();
           break;
         case 'Delete employee':
           deleteEmployee();
           break;
         case 'Delete role':
-          // todo function
+          deleteRole();
           break;
         case 'Exit':
           connection.end();
@@ -315,3 +314,19 @@ const deleteDepartment = () =>{
 /*------------------------------------------------------------------------------------------------
                                         DELETE ROLE
 -------------------------------------------------------------------------------------------------*/
+
+const deleteRole = () =>{
+  inquirer.prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the id of the role?',
+    },
+  ]).then((answer) => {
+      const query = `DELETE FROM role WHERE id= ?`;
+      connection.query(query, [answer.id], (err, res) => {
+          console.log(`The role was deleted successfully!`);
+        });
+        start();
+    });
+  };
