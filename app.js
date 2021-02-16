@@ -1,7 +1,8 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 
-
+const roleArray = [];
+const departmentIdArray = [];
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -25,6 +26,7 @@ connection.connect(function(err) {
   }
 
   console.log('connected as id ' + connection.threadId);
+  init();
   start();
 });
 
@@ -106,13 +108,10 @@ const viewallEmployees = () => {
   const query = `SELECT id, first_name, last_name, role_id, manager_id
                 FROM employee`;
   connection.query(query, (err, res) => {
-    console.log(`id   first name   last name   role_id   manager`);
-    console.log(`--------------------------------------------------------`);
-    res.forEach(({id, first_name, last_name, role_id, manager_id }) => {
-      console.log(`${id}   ${first_name}   ${last_name}   ${role_id}   ${manager_id}`);
+    console.log('\n');
+    console.table(res);
     });
     start();
-  });
 };
 
 /*------------------------------------------------------------------------------------------------
@@ -122,13 +121,10 @@ const viewallEmployees = () => {
 const viewallDepartment = () => {
   const query = `SELECT id, name FROM department`;
   connection.query(query, (err, res) => {
-    console.log(`id   name   `);
-    console.log(`-------------------------`);
-    res.forEach(({id, name }) => {
-      console.log(`${id}   ${name}`);
+    console.log('\n');
+    console.table(res);
     });
     start();
-  });
 };
 
 /*------------------------------------------------------------------------------------------------
@@ -139,13 +135,10 @@ const viewallRole = () => {
   const query = `SELECT role.id, title, salary, name FROM role
   INNER JOIN department ON role.department_id = department.id`;
   connection.query(query, (err, res) => {
-    console.log(`id  title  salary  name`);
-    console.log(`-------------------------`);
-    res.forEach(({id,  title,  salary,  name}) => {
-      console.log(`${id}   ${title}     ${salary}     ${name}`);
+    console.log('\n');
+    console.table(res);
     });
     start();
-  });
 };
 
 /*------------------------------------------------------------------------------------------------
@@ -154,26 +147,27 @@ const viewallRole = () => {
 
 const addnewEmployee = () =>{
   inquirer.prompt([
-    {
-      name: 'first_name',
-      type: 'input',
-      message: 'What is the first name of the employee?',
-    },
-    {
-      name: 'last_name',
-      type: 'input',
-      message: 'What is the last name of the employee?',
-    },
-    {
-      name: 'role_id',
-      type: 'input',
-      message: 'What is the role id of the employee?',
-    },
-    {
-      name: 'manager_id',
-      type: 'input',
-      message: 'What is the manager ID of the employee?',
-    },
+  {
+    name: 'first_name',
+    type: 'input',
+    message: 'What is the first name of the employee?',
+  },
+  {
+    name: 'last_name',
+    type: 'input',
+    message: 'What is the last name of the employee?',
+  },
+  {
+    name: 'role_id',
+    type: 'rawlist',
+    message: 'What is the role id of the employee?',
+    choices:roleArray,
+  },
+  {
+    name: 'manager_id',
+    type: 'input',
+    message: 'What is the manager ID of the employee?',
+  },
   ]).then((answer) => {
       const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
                     VALUES (?, ?, ?, ?)`;
@@ -210,10 +204,11 @@ inquirer.prompt([
   },
   {
     name: 'department_id',
-    type: 'input',
+    type: 'rawlist',
     message: 'What is the department id of the role?',
+    choices : departmentIdArray,
   },
-]).then((answer) => {
+  ]).then((answer) => {
     const query = `INSERT INTO role (title, salary, department_id) 
                   VALUES (?, ?, ?)`;
     connection.query(query, 
@@ -250,7 +245,7 @@ inquirer.prompt([
 };
 
 /*------------------------------------------------------------------------------------------------
-                                        UPDATE ROLE FRO THE EMPLOYEE
+                                        UPDATE ROLE FOR THE EMPLOYEE
 -------------------------------------------------------------------------------------------------*/
 const updateRole = () =>{
   inquirer.prompt([
@@ -261,8 +256,9 @@ const updateRole = () =>{
     },
     {
       name: 'role_id',
-      type: 'input',
+      type: 'rawlist',
       message: 'What is the new role id?',
+      choices : roleArray,
     }
   ]).then((answer) => {
       const query = `UPDATE  employee SET role_id = ? 
@@ -354,11 +350,8 @@ const viewEmployeeByManager = () =>{
       const query = `SELECT id, first_name, last_name, role_id, manager_id
       FROM employee WHERE manager_id= ?`;
       connection.query(query, [answer.id], (err, res) => {
-        console.log(`id   first name   last name   role_id   manager`);
-        console.log(`--------------------------------------------------------`);
-        res.forEach(({id, first_name, last_name, role_id, manager_id }) => {
-          console.log(`${id}   ${first_name}   ${last_name}   ${role_id}   ${manager_id}`);
-        });
+        console.log('\n');
+        console.table(res);
       });
         start();
     });
@@ -390,4 +383,27 @@ const updateEmlpoyeeManager = () =>{
       });
         start();
     });
+};
+
+const init = () => {
+  getRoleArray();
+  getDepartmentIdArray();
+};
+
+const getRoleArray = () => {
+  const query = `SELECT id FROM role`;
+  connection.query(query, (err, res) => {
+    res.forEach(({id}) => {
+      roleArray.push(id);
+    });
+  });
+};
+
+const getDepartmentIdArray = () => {
+  const query = `SELECT id FROM role`;
+  connection.query(query, (err, res) => {
+    res.forEach(({id}) => {
+      departmentIdArray.push(id);
+    });
+  });
 };
