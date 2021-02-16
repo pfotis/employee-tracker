@@ -1,8 +1,10 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 
-const roleArray = [];
+const roleIdArray = [];
 const departmentIdArray = [];
+const departmentNameArray = [];
+const roleTitleArray = [];
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -258,7 +260,7 @@ const updateRole = () =>{
       name: 'role_id',
       type: 'rawlist',
       message: 'What is the new role id?',
-      choices : roleArray,
+      choices : roleIdArray,
     }
   ]).then((answer) => {
       const query = `UPDATE  employee SET role_id = ? 
@@ -302,13 +304,14 @@ const deleteEmployee = () =>{
 const deleteDepartment = () =>{
   inquirer.prompt([
     {
-      name: 'id',
-      type: 'input',
+      name: 'name',
+      type: 'rawlist',
       message: 'What is the id of the department?',
+      choices: departmentNameArray,
     },
   ]).then((answer) => {
-      const query = `DELETE FROM department WHERE id= ?`;
-      connection.query(query, [answer.id], (err, res) => {
+      const query = `DELETE FROM department WHERE name= ?`;
+      connection.query(query, [answer.name], (err, res) => {
           console.log(`The department was deleted successfully!`);
         });
         start();
@@ -322,13 +325,14 @@ const deleteDepartment = () =>{
 const deleteRole = () =>{
   inquirer.prompt([
     {
-      name: 'id',
+      name: 'title',
       type: 'input',
       message: 'What is the id of the role?',
+      choices : roleTitleArray,
     },
   ]).then((answer) => {
-      const query = `DELETE FROM role WHERE id= ?`;
-      connection.query(query, [answer.id], (err, res) => {
+      const query = `DELETE FROM role WHERE title= ?`;
+      connection.query(query, [answer.title], (err, res) => {
           console.log(`The role was deleted successfully!`);
         });
         start();
@@ -386,24 +390,44 @@ const updateEmlpoyeeManager = () =>{
 };
 
 const init = () => {
-  getRoleArray();
+  getRoleIdArray();
   getDepartmentIdArray();
+  getDepartmentNameArray();
+  getRoleTitleArray();
 };
 
-const getRoleArray = () => {
+const getRoleIdArray = () => {
   const query = `SELECT id FROM role`;
   connection.query(query, (err, res) => {
     res.forEach(({id}) => {
-      roleArray.push(id);
+      roleIdArray.push(id);
+    });
+  });
+};
+
+const getRoleTitleArray = () => {
+  const query = `SELECT title FROM role`;
+  connection.query(query, (err, res) => {
+    res.forEach(({title}) => {
+      roleTitleArray.push(title);
     });
   });
 };
 
 const getDepartmentIdArray = () => {
-  const query = `SELECT id FROM role`;
+  const query = `SELECT id name FROM department`;
   connection.query(query, (err, res) => {
-    res.forEach(({id}) => {
+    res.forEach(({id, name}) => {
       departmentIdArray.push(id);
+    });
+  });
+};
+
+const getDepartmentNameArray = () => {
+  const query = `SELECT name FROM department`;
+  connection.query(query, (err, res) => {
+    res.forEach(({name}) => {
+      departmentNameArray.push(name);
     });
   });
 };
