@@ -1,8 +1,8 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 
-const add = require('./add.js');
-const view = require('./view.js');
+// const add = require('./add.js');
+// const view = require('./view.js');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -49,25 +49,25 @@ const start = () =>{
     .then((answer) => {
       switch (answer.action) {
         case 'View all the departments': 
-          view.allDepartment();
+          viewallDepartment();
           break;
-        case 'View all the departments': 
-          view.allEmployees();
+        case 'View all the employees': 
+          viewallEmployees();
           break;
         case 'View all the roles': 
-          view.allRole();
+          viewallRole();
           break;
         case 'Add new employee':
-          add.newEmployee();
+          addnewEmployee();
           break;
         case 'Add new role':
-          add.newRole();
+          addnewRole();
           break;
         case 'Add new department':
-          add.newDepartment();
+          addnewDepartment();
           break;
         case 'Update employee role':
-          // todo function
+          updateRole();
           break;
         case 'Exit':
           connection.end();
@@ -79,12 +79,160 @@ const start = () =>{
     });
 };
 
-const getAllTheRoles = () => {
-	const query = 'SELECT id, title FROM role';
 
-	connection.query(query, function (err, res) {
-		for(let i=0; i<res.length; i++){
-      roleArray.push(res[i].title);
-    }
-  });	
+const viewallEmployees = () => {
+  const query = `SELECT employee.id, first_name, last_name, role_id, manager_id
+                FROM employee`;
+  connection.query(query, (err, res) => {
+    console.log(`id   first name   last name   role_id   manager`);
+    console.log(`--------------------------------------------------------`);
+    res.forEach(({id, first_name, last_name, role_id, manager_id }) => {
+      console.log(`${id}   ${first_name}   ${last_name}   ${role_id}   ${manager_id}`);
+    });
+    start();
+  });
 };
+
+const viewallDepartment = () => {
+  const query = `SELECT id, name FROM department`;
+  connection.query(query, (err, res) => {
+    console.log(`id   name   `);
+    console.log(`-------------------------`);
+    res.forEach(({id, name }) => {
+      console.log(`${id}   ${name}`);
+    });
+    start();
+  });
+};
+
+const viewallRole = () => {
+  const query = `SELECT role.id, title, salary, name FROM role
+  INNER JOIN department ON role.department_id = department.id`;
+  connection.query(query, (err, res) => {
+    console.log(`id  title  salary  name`);
+    console.log(`-------------------------`);
+    res.forEach(({id,  title,  salary,  name}) => {
+      console.log(`${id}   ${title}     ${salary}     ${name}`);
+    });
+    start();
+  });
+};
+
+
+const addnewEmployee = () =>{
+  inquirer.prompt([
+    {
+      name: 'first_name',
+      type: 'input',
+      message: 'What is the first name of the employee?',
+    },
+    {
+      name: 'last_name',
+      type: 'input',
+      message: 'What is the last name of the employee?',
+    },
+    {
+      name: 'role_id',
+      type: 'input',
+      message: 'What is the role id of the employee?',
+    },
+    {
+      name: 'manager_id',
+      type: 'input',
+      message: 'What is the manager ID of the employee?',
+    },
+  ]).then((answer) => {
+      const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
+                    VALUES (?, ?, ?, ?)`;
+      connection.query(query, 
+        [
+          answer.first_name,
+          answer.last_name,
+          answer.role_id,
+          answer.manager_id,
+        ], (err, res) => {
+          console.log(`The new employee was inserted successfully!`);
+        });
+        start();
+    });
+};
+
+const addnewRole = () =>{
+inquirer.prompt([
+  {
+    name: 'title',
+    type: 'input',
+    message: 'What is the title of the role?',
+  },
+  {
+    name: 'salary',
+    type: 'input',
+    message: 'What is the salary of the role?',
+  },
+  {
+    name: 'department_id',
+    type: 'input',
+    message: 'What is the department id of the role?',
+  },
+]).then((answer) => {
+    const query = `INSERT INTO role (title, salary, department_id) 
+                  VALUES (?, ?, ?)`;
+    connection.query(query, 
+      [
+        answer.title,
+        answer.salary,
+        answer.department_id,
+      ], (err, res) => {
+        console.log(`The new role was inserted successfully!`);
+      });
+      start();
+  });
+};
+
+
+const addnewDepartment = () =>{
+inquirer.prompt([
+  {
+    name: 'name',
+    type: 'input',
+    message: 'What is the name of the department?',
+  }
+]).then((answer) => {
+    const query = `INSERT INTO department (name) 
+                  VALUES (?)`;
+    connection.query(query, 
+      [
+        answer.name,
+      ], (err, res) => {
+        console.log(`The new department was inserted successfully!`);
+      });
+      start();
+  });
+};
+
+const updateRole = () =>{
+  inquirer.prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the id of the employee?',
+    },
+    {
+      name: 'role_id',
+      type: 'input',
+      message: 'What is the new role id?',
+    }
+  ]).then((answer) => {
+      const query = `UPDATE  employee SET role_id = ? 
+                    WHERE id = "`;
+      connection.query(query, 
+        [
+          answer.role_id,
+          answer.id
+        ], (err, res) => {
+          console.log(`The new department was inserted successfully!`);
+        });
+        start();
+    });
+  };
+
