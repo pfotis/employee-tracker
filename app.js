@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 
+// with arrays store the data from the databse to run the question-choises
 const roleIdArray = [];
 const departmentIdArray = [];
 const departmentNameArray = [];
@@ -389,12 +390,18 @@ const updateEmlpoyeeManager = () =>{
     });
 };
 
+/*------------------------------------------------------------------------------------------------
+           Init run all the functions the app get the lists for the choises(menu)
+-------------------------------------------------------------------------------------------------*/
+
+
 const init = () => {
   getRoleIdArray();
   getDepartmentIdArray();
   getDepartmentNameArray();
   getRoleTitleArray();
 };
+
 
 const getRoleIdArray = () => {
   const query = `SELECT id FROM role`;
@@ -415,9 +422,9 @@ const getRoleTitleArray = () => {
 };
 
 const getDepartmentIdArray = () => {
-  const query = `SELECT id name FROM department`;
+  const query = `SELECT id FROM department`;
   connection.query(query, (err, res) => {
-    res.forEach(({id, name}) => {
+    res.forEach(({id}) => {
       departmentIdArray.push(id);
     });
   });
