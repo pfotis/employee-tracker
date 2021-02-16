@@ -11,7 +11,9 @@
 
 link of repository :   https://github.com/pfotis/employee-tracker
 
-link of video    :  https://drive.google.com/file/d/1T5LL2ZRrMBjo6_XrGYMKBI9GJgmVz1xG/view
+link of video    :  https://drive.google.com/file/d/1Cryp5v08-8VWo3N_kv_MRgiAThkk5EW8/view
+
+<iframe src="https://drive.google.com/file/d/1Cryp5v08-8VWo3N_kv_MRgiAThkk5EW8/preview" width="640" height="480"></iframe>
 
 ## Description
 

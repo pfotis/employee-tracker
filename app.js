@@ -164,7 +164,7 @@ const addnewEmployee = () =>{
     name: 'role_id',
     type: 'rawlist',
     message: 'What is the role id of the employee?',
-    choices:roleArray,
+    choices:roleIdArray,
   },
   {
     name: 'manager_id',
@@ -327,7 +327,7 @@ const deleteRole = () =>{
   inquirer.prompt([
     {
       name: 'title',
-      type: 'input',
+      type: 'rawlist',
       message: 'What is the id of the role?',
       choices : roleTitleArray,
     },
