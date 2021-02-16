@@ -1,7 +1,7 @@
 # employee-tracker
 
-[links](#links)
-* [Installation](#installation)
+  * [links](#links)
+  * [Installation](#installation)
   * [ Descriptione](#description)
   * [Tests](#tests)
   * [Questions](#questions)
