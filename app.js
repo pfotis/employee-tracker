@@ -45,6 +45,8 @@ const start = () =>{
         'Delete department',
         'Delete employee',
         'Delete role',
+        'View employee by manager',
+        'Update employee`s manager',
         'Exit',
       ],
     })
@@ -79,6 +81,12 @@ const start = () =>{
           break;
         case 'Delete role':
           deleteRole();
+          break;
+        case 'View employee by manager':
+          viewEmployeeByManager();
+          break;
+        case 'Update employee`s manager':
+          updateEmlpoyeeManager();
           break;
         case 'Exit':
           connection.end();
@@ -331,26 +339,6 @@ const deleteRole = () =>{
     });
   };
 
-  /*------------------------------------------------------------------------------------------------
-                                        DELETE ROLE
--------------------------------------------------------------------------------------------------*/
-
-const deleteRole = () =>{
-  inquirer.prompt([
-    {
-      name: 'id',
-      type: 'input',
-      message: 'What is the id of the role?',
-    },
-  ]).then((answer) => {
-      const query = `DELETE FROM role WHERE id= ?`;
-      connection.query(query, [answer.id], (err, res) => {
-          console.log(`The role was deleted successfully!`);
-        });
-        start();
-    });
-  };
-
 /*------------------------------------------------------------------------------------------------
                                        VIEW EMPLOYEES BY MANAGER
 -------------------------------------------------------------------------------------------------*/
@@ -364,13 +352,41 @@ const viewEmployeeByManager = () =>{
     },
   ]).then((answer) => {
       const query = `SELECT id, first_name, last_name, role_id, manager_id
-      FROM employee WHERE id= ?`;
+      FROM employee WHERE manager_id= ?`;
       connection.query(query, [answer.id], (err, res) => {
         console.log(`id   first name   last name   role_id   manager`);
         console.log(`--------------------------------------------------------`);
         res.forEach(({id, first_name, last_name, role_id, manager_id }) => {
           console.log(`${id}   ${first_name}   ${last_name}   ${role_id}   ${manager_id}`);
         });
+      });
+        start();
+    });
+};
+
+/*------------------------------------------------------------------------------------------------
+                                       UPDATE EMPLOYEE'S MANAGER
+-------------------------------------------------------------------------------------------------*/
+
+const updateEmlpoyeeManager = () =>{
+  inquirer.prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the id of the employee?',
+    },
+    {
+      name: 'manager_id',
+      type: 'input',
+      message: 'What is the id of the new manager?',
+    }
+  ]).then((answer) => {
+      const query = `UPDATE employee SET manager_id = ? WHERE id = ?`;
+      connection.query(query, 
+        [
+          answer.manager_id,
+          answer.id
+        ], (err, res) => {
       });
         start();
     });
