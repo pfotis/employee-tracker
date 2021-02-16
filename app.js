@@ -55,7 +55,7 @@ const start = () =>{
           view.allEmployees();
           break;
         case 'View all the roles': 
-          // todo function
+          view.allRole();
           break;
         case 'Add new employee':
           add.newEmployee();
@@ -87,4 +87,4 @@ const getAllTheRoles = () => {
       roleArray.push(res[i].title);
     }
   });	
-};*/
+};

@@ -17,8 +17,7 @@ const allEmployees = () => {
 };
 
 const allDepartment = () => {
-    const query = `SELECT id, name
-                  FROM department`;
+    const query = `SELECT id, name FROM department`;
     connection.query(query, (err, res) => {
       console.log(`id   name   `);
       console.log(`-------------------------`);
@@ -29,7 +28,21 @@ const allDepartment = () => {
     });
 };
 
+const allRole = () => {
+    const query = `SELECT role.id, title, salary, name FROM role
+    INNER JOIN department ON role.department_id = department.id`;
+    connection.query(query, (err, res) => {
+      console.log(`id  title  salary  name`);
+      console.log(`-------------------------`);
+      res.forEach(({id,  title,  salary,  name}) => {
+        console.log(`${id}   ${title}     ${salary}     ${name}`);
+      });
+      start();
+    });
+};
+
 module.exports = {
     allEmployees,
-    allDepartment
+    allDepartment,
+    allRole
 }
